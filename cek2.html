@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUGAS BESAR STRATEGI ALGORITMA</title>
+    <style>
+        .correct{
+            color: red;
+            display: inline;
+        }
+        .header{
+            text-align: center;
+        }
+        .area{
+            position: absolute;
+            margin-left: 50%;
+            transform: translate(-51%, 0%); /* Center the container */
+        }
+        .inputText{
+           resize: none;
+           height: 200px;
+           width: 250PX;
+           font-size: 20px;
+        }
+        .user{
+            display: flex;
+            gap: 20px;
+        }
+        .input{
+            display: block;
+        }
+        .button{
+            padding: 5px;
+            border-radius: 10px;
+        }
+        label{
+            display: block;
+        }
+      
+    
+    </style>
+</head>
+<body>
+    <div class="header">
+    <h>TUGAS STRATEGI ALGORITMA</h>
+    </div>
+    
+    <div class="area">
+       
+       
+      
+       <p>Autocorrect and Autocomplete</p>
+       <div class="user">
+            <textarea  class="inputText" placeholder="Input your sentence here..."></textarea>
+
+            <div class="input">   
+            <label>
+                <input class="correct" type="radio" name="algoritma">
+                Autocorrect
+            </label>
+            <label>
+                <input class="complete" type="radio" name="algoritma">
+                Autocomplete
+            </label>
+            
+            </div>
+       </div>
+
+
+       <button type="submit" class="submitButton">Submit</button>
+
+      
+    <br>
+    <p class="data">q</p>
+    <p class="time"></p>
+    <br>
+    <p class="data1"></p>
+    <p class="time1"></p>
+    <p class="timeDif"></p>
+    </div>
+
+    
+    <script>
+ 
+        // JavaScript function to resize textarea based on content
+        let route=''
+        let name1=''
+        let name2=''
+        document.querySelector(".correct").addEventListener("click",()=>{
+            route="autocorrect";
+            name1="correct_DP";
+            name2="correct_BF";
+        })
+        document.querySelector(".complete").addEventListener("click",()=>{
+            route="autocomplete"
+            name1="complete_DP"
+            name2="complete_BF"
+        })
+        document.querySelector(".submitButton").addEventListener("click",()=>{
+            const radio=document.querySelectorAll('input[type="radio"]')
+            let check=false
+            radio.forEach(function(radioButton){
+                if (radioButton.checked){
+                    check=true
+                }
+            })
+            if(!check){
+                alert("Please select type of service")
+            }else{
+                const temp=document.querySelector('.inputText').value;
+                send(temp);
+            }
+        });
+        
+        async function send(temp){
+            const url=`http://localhost:5000/${route}`;
+
+            const data={
+                text:temp
+            };
+            const option={
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify(data),
+            };
+            alert("Mengirim data");
+            try{
+                const response=await fetch(url,option);
+                const responseData=await response.json();
+                localStorage.setItem('newdata',JSON.stringify(responseData));
+                showData();
+                alert("mnoce")
+                console.log(responseData)
+            }catch(error){
+                alert(error);
+            }
+        }
+            
+        function showData(){
+            console.log(JSON.stringify(localStorage.getItem('newdata'))) 
+            let temp=JSON.parse(localStorage.getItem('newdata'));
+            if(temp){
+                document.querySelector('.data').innerHTML=temp[name1];
+                document.querySelector('.time').innerHTML=`Waktu Pengerjaan=${temp['time_DP']}`;
+                document.querySelector('.data1').innerHTML=temp[name2];
+                document.querySelector('.time1').innerHTML=`Waktu Pengerjaan=${temp['time_BF']} <br> `;
+                document.querySelector('.timeDif').innerHTML=`Perbedaan waktu (BF-DP)= ${temp['time_BF']-temp['time_DP']}`;
+            }else{
+                document.querySelector('.data').innerHTML='';
+            }
+            
+        }    
+        /* let info={
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({text:document.querySelector('.inputText').value}),
+    };
+    
+    try{
+        console.log(info);
+        const response =await fetch("http://localhost:5000/autocorrect",info);
+        data=await response.json();
+        alert("reveive");
+        console.log(data);
+        console.log(data["nice"]);
+        alert("")
+        localStorage.setItem('newdata',JSON.stringify(data));
+        showData()
+    }catch(error){
+        console.error(error);
+        alert(error);
+    }
+function showData(){
+    //console.log(JSON.stringify(localStorage.getItem('newdata')))
+    
+    let temp=JSON.parse(localStorage.getItem('newdata'));
+    if(temp){
+        document.querySelector('.data').innerHTML=temp["nice"];
+    }else{
+        document.querySelector('.data').innerHTML='';
+    }
+    
+}*/
+           
+        </script>
+</body>
+
+</html>
+
